@@ -5,6 +5,10 @@ Steal a primary token and spawn cmd.exe using the stolen token.
 
 Dug into the minimum privileges needed for OpenProcess(), OpenProcessToken() and DuplicateTokenEx(). Added the ability to pass a PID by command-line argument.
 
+# Elevating to SYSTEM 
+![GetSystem](https://raw.githubusercontent.com/justinbui/PrimaryTokenTheft/master/image.png)
+Credits to: https://twitter.com/monoxgas/status/1109892490566336512?s=20
+
 # Credit 
 https://ired.team/offensive-security/privilege-escalation/t1134-access-token-manipulation
 
