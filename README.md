@@ -7,9 +7,10 @@ Dug into the minimum privileges needed for OpenProcess(), OpenProcessToken() and
 
 # Elevating to SYSTEM 
 ![GetSystem](https://raw.githubusercontent.com/justinbui/PrimaryTokenTheft/master/image.png)
-Credits to: https://twitter.com/monoxgas/status/1109892490566336512?s=20
 
 # Credit 
-https://ired.team/offensive-security/privilege-escalation/t1134-access-token-manipulation
+Main blog and source code: https://ired.team/offensive-security/privilege-escalation/t1134-access-token-manipulation
+
+Elevating to system with Winlogon: https://twitter.com/monoxgas/status/1109892490566336512?s=20
 
 Figured out minimum privileges to call DuplicateTokenEx() with for CreateProcessWithTokenW to work here: https://stackoverflow.com/questions/5447418/why-is-createprocesswithtokenw-failing-with-error-access-denied (MSDN docs are wrong)
