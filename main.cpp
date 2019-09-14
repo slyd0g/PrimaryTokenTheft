@@ -52,13 +52,6 @@ BOOL SetPrivilege(
 }
 
 int main(int argc, char** argv) {
-	// Add SE debug privilege
-	HANDLE currentTokenHandle = NULL;
-	BOOL getCurrentToken = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &currentTokenHandle);
-	if (SetPrivilege(currentTokenHandle, L"SeDebugPrivilege", TRUE))
-	{
-		printf("[+] SeDebugPrivilege enabled!\n");
-	}
 
 	// Grab PID from command line argument
 	char *pid_c = argv[1];
@@ -72,6 +65,14 @@ int main(int argc, char** argv) {
 	ZeroMemory(&startupInfo, sizeof(STARTUPINFO));
 	ZeroMemory(&processInformation, sizeof(PROCESS_INFORMATION));
 	startupInfo.cb = sizeof(STARTUPINFO);
+
+	// Add SE debug privilege
+	HANDLE currentTokenHandle = NULL;
+	BOOL getCurrentToken = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &currentTokenHandle);
+	if (SetPrivilege(currentTokenHandle, L"SeDebugPrivilege", TRUE))
+	{
+		printf("[+] SeDebugPrivilege enabled!\n");
+	}
 
 	// Call OpenProcess(), print return code and error code
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, true, PID_TO_IMPERSONATE);
