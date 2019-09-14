@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	// Call OpenProcess(), print return code and error code
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, true, PID_TO_IMPERSONATE);
 	if (GetLastError() == NULL)
-		printf("[+] OpenProcess success!\n");
+		printf("[+] OpenProcess() success!\n");
 	else
 	{
 		printf("[-] OpenProcess() Return Code: %i\n", processHandle);
