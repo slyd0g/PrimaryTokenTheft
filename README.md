@@ -9,7 +9,7 @@ Steal a primary token and spawn cmd.exe using the stolen token.
 
 
 # Elevating to SYSTEM 
-![GetSystem](https://raw.githubusercontent.com/justinbui/PrimaryTokenTheft/master/image.png)
+![GetSystem](https://raw.githubusercontent.com/justinbui/PrimaryTokenTheft/master/example.png)
 
 # Credit 
 Main blog and source code: https://ired.team/offensive-security/privilege-escalation/t1134-access-token-manipulation
