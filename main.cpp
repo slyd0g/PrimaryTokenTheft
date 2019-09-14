@@ -52,7 +52,6 @@ BOOL SetPrivilege(
 }
 
 int main(int argc, char** argv) {
-
 	// Grab PID from command line argument
 	char *pid_c = argv[1];
 	DWORD PID_TO_IMPERSONATE = atoi(pid_c);
