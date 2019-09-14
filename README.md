@@ -3,7 +3,8 @@ Main code taken from [@kondecuotas](https://twitter.com/kondencuotas) [blog](htt
 
 Steal a primary token and spawn cmd.exe using the stolen token.
 
-Dug into the minimum privileges needed for OpenProcess(), OpenProcessToken() and DuplicateTokenEx(). Added the ability to pass a PID by command-line argument.
+- Reduced privileges needed for OpenProcess(), OpenProcessToken() and DuplicateTokenEx() from TOKEN_ALL_ACCESS/PROCESS_ALL_ACCESS to the bare minimum needed for each API call.
+- Added the ability to pass a PID by command-line argument.
 
 # Elevating to SYSTEM 
 ![GetSystem](https://raw.githubusercontent.com/justinbui/PrimaryTokenTheft/master/image.png)
