@@ -6,7 +6,7 @@ Steal a primary token and spawn cmd.exe using the stolen token.
 - Added the ability to pass a PID by command-line argument.
 - Automatically enable SeDebugPrivilege.
 - Reduced privileges needed for OpenProcess(), OpenProcessToken() and DuplicateTokenEx() from TOKEN_ALL_ACCESS/PROCESS_ALL_ACCESS to the bare minimum needed for each API call.
-- Will use ImpersonatedLoggedOnUser() to impersonate the logged-on user in the current thread.
+- Will also use ImpersonatedLoggedOnUser() to impersonate the logged-on user in the current thread.
 
 
 # Elevating to SYSTEM 
