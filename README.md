@@ -8,6 +8,9 @@ Steal a primary token and spawn cmd.exe using the stolen token.
 - Reduced privileges needed for OpenProcess(), OpenProcessToken() and DuplicateTokenEx() from TOKEN_ALL_ACCESS/PROCESS_ALL_ACCESS to the bare minimum needed for each API call.
 - Will also use ImpersonatedLoggedOnUser() to impersonate the logged-on user in the current thread.
 
+# Blogpost
+- https://posts.specterops.io/understanding-and-defending-against-access-token-theft-finding-alternatives-to-winlogon-exe-80696c8a73b
+
 
 # Elevating to SYSTEM 
 ![GetSystem](https://raw.githubusercontent.com/justinbui/PrimaryTokenTheft/master/example.png)
